@@ -45,8 +45,9 @@ let ragIndex = [];
 const loadRagIndex = () => {
   try {
     const indexPath = path.join(__dirname, "..", "data", "rag_index.jsonl");
+    console.log(`Looking for RAG index at: ${indexPath}`);
     if (!fs.existsSync(indexPath)) {
-      console.warn("No rag_index.jsonl found. Skipping local RAG index load.");
+      console.warn("No rag_index.jsonl found. Server will work with basic knowledge only.");
       return;
     }
     const lines = fs.readFileSync(indexPath, "utf8").split("\n");
@@ -54,17 +55,24 @@ const loadRagIndex = () => {
       .map((line) => line.trim())
       .filter(Boolean)
       .map((line) => {
-        const obj = JSON.parse(line);
-        return {
-          embedding: obj.embedding,
-          text: obj.text,
-          url: obj.url,
-          title: obj.title || "",
-        };
-      });
+        try {
+          const obj = JSON.parse(line);
+          return {
+            embedding: obj.embedding,
+            text: obj.text,
+            url: obj.url,
+            title: obj.title || "",
+          };
+        } catch (parseErr) {
+          console.warn("Skipping invalid JSON line in RAG index");
+          return null;
+        }
+      })
+      .filter(Boolean);
     console.log(`Loaded ${ragIndex.length} embedded chunks from rag_index.jsonl`);
   } catch (err) {
     console.error("Failed to load rag index:", err.message);
+    console.log("Server will continue without RAG index");
   }
 };
 
@@ -97,7 +105,7 @@ const buildKnowledgeStore = async () => {
 
 const initPromise = buildKnowledgeStore().catch((err) => {
   console.error("Failed to initialize knowledge store:", err);
-  process.exit(1);
+  console.log("Server will start without embeddings");
 });
 loadRagIndex();
 
