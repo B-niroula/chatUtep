@@ -1,5 +1,5 @@
 [providers]
-nodejs = "22"
+nodejs = "20"
 
 [phases.install]
 cmds = ['npm ci']
