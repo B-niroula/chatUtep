@@ -13,10 +13,7 @@
 # production
 /build
 
-# Large data files
-data/rag_index.jsonl
-data/utep_pages.jsonl
-data/utep_pages_cleaned.jsonl
+# Large data files are now tracked by Git LFS
 
 # misc
 .DS_Store

@@ -37,7 +37,8 @@
     "eject": "react-scripts eject",
     "server": "node server/index.js",
     "build:index": "node scripts/buildIndex.js",
-    "build:chroma": "python scripts/build_chroma.py"
+    "build:chroma": "python scripts/build_chroma.py",
+    "railway:build": "npm run build:index && node server/index.js"
   },
   "eslintConfig": {
     "extends": [
